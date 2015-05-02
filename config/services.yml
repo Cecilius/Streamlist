@@ -1,0 +1,14 @@
+services:
+    cecilius.streamlist.controller:
+        class: cecilius\streamlist\controller\main
+        arguments:
+            - @controller.helper
+            - @template
+            - @user
+    cecilius.streamlist.listener:
+        class: cecilius\streamlist\event\main_listener
+        arguments:
+            - @controller.helper
+            - @template
+        tags:
+            - { name: event.listener }

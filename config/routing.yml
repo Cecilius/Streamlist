@@ -1,0 +1,3 @@
+cecilius_streamlist_controller:
+    path: /streams
+    defaults: { _controller: cecilius.streamlist.controller:handle }
