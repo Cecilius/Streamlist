@@ -1,11 +1,78 @@
 <!-- INCLUDE overall_header.html -->
 
-<h2>{STREAMLIST_MESSAGE}</h2>
+<h2>{STREAMLIST_MESSAGE}</h2><br>
 
-<!-- BEGIN streams -->
+<h2>{STREAMLIST_ONLINE}</h2>
 
-<h2>{streams.STREAM_OWNER}</h2><br><h3>{streams.STREAM_LINK}</h3><br>
+<!-- IF not .online_streams -->
+<div class="post has-profile bg2 online">
+	<div class="inner">
+		<div class="postbody">
+			<div id="post_content1">
+				<div class="content">
+					{NO_ONLINE_STREAM}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ENDIF -->
 
-<!-- END streams -->
+<!-- BEGIN online_streams -->
+<div class="post has-profile bg2 online">
+	<div class="inner">
+		<dl class="postprofile">
+			<dt class="has-profile-rank no-avatar dropdown-container dropdown-right dropdown-down">
+				<div class="avatar-container"></div>
+				{online_streams.STREAM_OWNER}
+			</dt>
+		</dl>
+		<div class="postbody">
+			<div id="post_content1">
+				<div class="content">
+					{online_streams.STREAM_LINK}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- END online_streams -->
+
+<h2>{STREAMLIST_OFFLINE}</h2>
+
+<!-- IF not .offline_streams -->
+<div class="post has-profile bg2 offline">
+	<div class="inner">
+		<div class="postbody">
+			<div id="post_content1">
+				<div class="content">
+					{NO_OFFLINE_STREAM}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ENDIF -->
+
+<!-- BEGIN offline_streams -->
+<div class="post has-profile bg2 offline">
+	<div class="inner">
+		<dl class="postprofile">
+			<dt class="has-profile-rank no-avatar dropdown-container dropdown-right dropdown-down">
+				<div class="avatar-container"></div>
+				{offline_streams.STREAM_OWNER}
+			</dt>
+		</dl>
+		<div class="postbody">
+			<div id="post_content1">
+				<div class="content">
+					{offline_streams.STREAM_LINK}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- END offline_streams -->
 
 <!-- INCLUDE overall_footer.html -->

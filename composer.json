@@ -3,7 +3,7 @@
 	"type": "phpbb-extension",
 	"description": "Add new page with list of streams - based on added profile fields. Currently supported Youtube and Twitch live streams.",
 	"homepage": "https://github.com/cecilius/streamlist",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"license": "GPL-2.0",
 	"authors": [
 		{
