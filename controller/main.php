@@ -177,7 +177,8 @@ class main
 					}
 					if($stream['live'] === false)
 					{
-						$stream['stream_address'] = '<iframe width="640" height="390" src="http://www.youtube.com/embed?listType=user_uploads&list=' . $stream['channel_name'] . '"></iframe>';
+						$stream['stream_address'] = '<a href="http://www.youtube.com/' . $stream['channel_name'] . '">Youtube - ' . $stream['channel_name'] . '</a>';
+//						$stream['stream_address'] = '<iframe width="640" height="390" src="http://www.youtube.com/embed?listType=user_uploads&list=' . $stream['channel_name'] . '"></iframe>';
 					}
 				break;
 
@@ -196,7 +197,8 @@ class main
 					}
 					if($stream['live'] === false)
 					{
-						$stream['stream_address'] = '<iframe id="player" type="text/html" width="640" height="390" src="http://www.twitch.tv/' . $stream['channel_name'] . '/embed" frameborder="0"></iframe>';
+						$stream['stream_address'] = '<a href="http://www.twitch.tv/' . $stream['channel_name'] . '">Twitch - ' . $stream['channel_name'] . '</a>';
+//						$stream['stream_address'] = '<iframe id="player" type="text/html" width="640" height="390" src="http://www.twitch.tv/' . $stream['channel_name'] . '/embed" frameborder="0"></iframe>';
 					}
 				break;
 
