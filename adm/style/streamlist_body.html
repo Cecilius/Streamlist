@@ -1,0 +1,26 @@
+<!-- INCLUDE overall_header.html -->
+
+<h1>{L_SETTINGS}</h1>
+
+<form id="acp_board" method="post" action="{U_ACTION}">
+	<fieldset>
+		<dl>
+			<dt><label for="cecilius_streamlist_show_offline">{L_ACP_STREAMLIST_SHOW_OFFLINE}</label></dt>
+			<dd><input type="radio" class="radio" name="cecilius_streamlist_show_offline" value="1" <!-- IF CECILIUS_STREAMLIST_SHOW_OFFLINE -->checked="checked"<!-- ENDIF -->/> {L_YES} &nbsp;
+				<input type="radio" class="radio" name="cecilius_streamlist_show_offline" value="0" <!-- IF not CECILIUS_STREAMLIST_SHOW_OFFLINE -->checked="checked"<!-- ENDIF --> /> {L_NO}</dd>
+		</dl>
+		<dl>
+			<dt><label for="cecilius_streamlist_show_offline">{L_ACP_STREAMLIST_SHOW_OFFLINE_PLAYERS}</label></dt>
+			<dd><input type="radio" class="radio" name="cecilius_streamlist_show_offline_players" value="1" <!-- IF CECILIUS_STREAMLIST_SHOW_OFFLINE_PLAYERS -->checked="checked"<!-- ENDIF -->/> {L_YES} &nbsp;
+				<input type="radio" class="radio" name="cecilius_streamlist_show_offline_players" value="0" <!-- IF not CECILIUS_STREAMLIST_SHOW_OFFLINE_PLAYERS -->checked="checked"<!-- ENDIF --> /> {L_NO}</dd>
+		</dl>
+
+		<p class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+		</p>
+
+		{S_FORM_TOKEN}
+	</fieldset>
+</form>
+<!-- INCLUDE overall_footer.html -->

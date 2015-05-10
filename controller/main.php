@@ -11,6 +11,9 @@ namespace cecilius\streamlist\controller;
 
 class main
 {
+	/* @var \phpbb\config\config */
+	protected $config;
+
 	/* @var \phpbb\db\driver\driver_interface */
 	protected $db;
  
@@ -26,13 +29,15 @@ class main
 	/**
 	* Constructor
 	*
+	* @param \phpbb\config\config		$config
 	* @param \phpbb\db\driver\driver_interface	$db 
 	* @param \phpbb\controller\helper	$helper
 	* @param \phpbb\template\template	$template
 	* @param \phpbb\user				$user
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\user $user)
 	{
+		$this->config = $config;
 		$this->db = $db;
 		$this->helper = $helper;
 		$this->template = $template;
@@ -79,12 +84,15 @@ class main
 					'STREAM_LINK'	=> $stream['stream_address']
 				));
 			}
-			foreach($offline_array as $stream)
+			if($this->config['cecilius_streamlist_show_offline'])
 			{
-				$this->template->assign_block_vars('offline_streams', array(
-					'STREAM_OWNER'	=> $stream['user_name'],
-					'STREAM_LINK'	=> $stream['stream_address']
-				));
+				foreach($offline_array as $stream)
+				{
+					$this->template->assign_block_vars('offline_streams', array(
+						'STREAM_OWNER'	=> $stream['user_name'],
+						'STREAM_LINK'	=> $stream['stream_address']
+					));
+				}
 			}
 		}
 
@@ -177,8 +185,14 @@ class main
 					}
 					if($stream['live'] === false)
 					{
-						$stream['stream_address'] = '<a href="http://www.youtube.com/' . $stream['channel_name'] . '">Youtube - ' . $stream['channel_name'] . '</a>';
-//						$stream['stream_address'] = '<iframe width="640" height="390" src="http://www.youtube.com/embed?listType=user_uploads&list=' . $stream['channel_name'] . '"></iframe>';
+						if($this->config['cecilius_streamlist_show_offline_players'])
+						{
+							$stream['stream_address'] = '<iframe width="640" height="390" src="http://www.youtube.com/embed?listType=user_uploads&list=' . $stream['channel_name'] . '"></iframe>';
+						}
+						else
+						{
+							$stream['stream_address'] = '<a href="http://www.youtube.com/' . $stream['channel_name'] . '">Youtube - ' . $stream['channel_name'] . '</a>';
+						}
 					}
 				break;
 
@@ -197,8 +211,14 @@ class main
 					}
 					if($stream['live'] === false)
 					{
-						$stream['stream_address'] = '<a href="http://www.twitch.tv/' . $stream['channel_name'] . '">Twitch - ' . $stream['channel_name'] . '</a>';
-//						$stream['stream_address'] = '<iframe id="player" type="text/html" width="640" height="390" src="http://www.twitch.tv/' . $stream['channel_name'] . '/embed" frameborder="0"></iframe>';
+						if($this->config['cecilius_streamlist_show_offline_players'])
+						{
+							$stream['stream_address'] = '<iframe id="player" type="text/html" width="640" height="390" src="http://www.twitch.tv/' . $stream['channel_name'] . '/embed" frameborder="0"></iframe>';
+						}
+						else
+						{
+							$stream['stream_address'] = '<a href="http://www.twitch.tv/' . $stream['channel_name'] . '">Twitch - ' . $stream['channel_name'] . '</a>';
+						}
 					}
 				break;
 

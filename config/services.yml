@@ -2,6 +2,7 @@ services:
     cecilius.streamlist.controller:
         class: cecilius\streamlist\controller\main
         arguments:
+            - @config
             - @dbal.conn
             - @controller.helper
             - @template
