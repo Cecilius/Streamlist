@@ -115,11 +115,11 @@ class main
 	private function get_streams()
 	{
 		$streams_array = array();
-
+//hardcoded to only obtain streams from members of specific ranks
 		$sql = 'SELECT p.user_id, p.pf_phpbb_youtube, p.pf_phpbb_twitch, u.username, u.user_id
 			FROM ' . PROFILE_FIELDS_DATA_TABLE . ' p, ' . USERS_TABLE . ' u 
 			WHERE (p.pf_phpbb_youtube <> \'\' OR p.pf_phpbb_twitch <> \'\') 
-			AND p.user_id = u.user_id 
+			AND p.user_id = u.user_id AND p.user_id IN (SELECT user_id FROM ' . USER_GROUP_TABLE . ' WHERE group_id IN (8, 9, 10))
 			ORDER BY u.username';
 		$result = $this->db->sql_query($sql);
 
@@ -158,68 +158,11 @@ class main
 			switch($stream['provider'])
 			{
 				case 'youtube':
-					$youtube_api_key = '';
-					$result = $this->curl_get('https://www.googleapis.com/youtube/v3/channels?part=id&forUsername=' . $stream['channel_name'] . '&key=' . $youtube_api_key);
-
-					if($result !== FALSE && $result !== '' && $this->is_json($result) !== false)
-					{
-						$json_array = json_decode($result, true);
-
-						if(!empty($json_array['items']))
-						{
-							$channel_id = $json_array['items'][0]['id'];
-
-							$result = $this->curl_get('https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' . $channel_id . '&eventType=live&type=video&key=' . $youtube_api_key);
-							
-							if($result !== FALSE && $result !== '' && $this->is_json($result) !== false)
-							{
-								$json_array = json_decode($result, true);
-
-								if(!empty($json_array['items']))
-								{
-									$stream['stream_address'] = '<iframe width="640" height="390" src="http://www.youtube.com/embed/' . $json_array['items'][0]['id']['videoId'] . '"></iframe>';
-									$stream['live'] = true;
-								}
-							}
-						}
-					}
-					if($stream['live'] === false)
-					{
-						if($this->config['cecilius_streamlist_show_offline_players'])
-						{
-							$stream['stream_address'] = '<iframe width="640" height="390" src="http://www.youtube.com/embed?listType=user_uploads&list=' . $stream['channel_name'] . '"></iframe>';
-						}
-						else
-						{
-							$stream['stream_address'] = '<a href="http://www.youtube.com/' . $stream['channel_name'] . '">Youtube - ' . $stream['channel_name'] . '</a>';
-						}
-					}
+					$stream = $this->get_youtube_stream($stream);
 				break;
 
 				case 'twitch':
-					$result = $this->curl_get('https://api.twitch.tv/kraken/streams/' . $stream['channel_name']);
-
-					if($result !== FALSE && $result !== '' && $this->is_json($result) !== false)
-					{
-						$json_array = json_decode($result, true);
-
-						if(!empty($json_array['stream']))
-						{
-							$stream['stream_address'] = '<iframe id="player" type="text/html" width="640" height="390" src="' . $json_array['stream']['channel']['url'] . '/embed" frameborder="0"></iframe>';
-							$stream['live'] = true;
-						}
-					}
-					if($stream['live'] === false)
-					{
-						if($this->config['cecilius_streamlist_show_offline_players'])
-						{
-							$stream['stream_address'] = '<iframe id="player" type="text/html" width="640" height="390" src="http://www.twitch.tv/' . $stream['channel_name'] . '/embed" frameborder="0"></iframe>';
-						}
-						else
-						{
-							$stream['stream_address'] = '<a href="http://www.twitch.tv/' . $stream['channel_name'] . '">Twitch - ' . $stream['channel_name'] . '</a>';
-						}
-					}
+					$stream = $this->get_twitch_stream($stream);
 				break;
 
 				default:
@@ -258,4 +201,79 @@ class main
 		
 		return $result;
 	}
+
+	private function get_youtube_stream($stream)
+	{
+		//hardcoded youtube api key
+		$youtube_api_key = '';
+		$result = $this->curl_get('https://www.googleapis.com/youtube/v3/channels?part=id&forUsername=' . $stream['channel_name'] . '&key=' . $youtube_api_key);
+
+		if($result !== FALSE && $result !== '' && $this->is_json($result) !== false)
+		{
+			$json_array = json_decode($result, true);
+
+			if(!empty($json_array['items']))
+			{
+				$channel_id = $json_array['items'][0]['id'];
+
+				$result = $this->curl_get('https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' . $channel_id . '&eventType=live&type=video&key=' . $youtube_api_key);
+				
+				if($result !== FALSE && $result !== '' && $this->is_json($result) !== false)
+				{
+					$json_array = json_decode($result, true);
+
+					if(!empty($json_array['items']))
+					{
+						$stream['stream_address'] = '<iframe width="640" height="390" src="http://www.youtube.com/embed/' . $json_array['items'][0]['id']['videoId'] . '"></iframe>';
+						$stream['live'] = true;
+					}
+				}
+			}
+		}
+		
+		if($stream['live'] === false)
+		{
+			if($this->config['cecilius_streamlist_show_offline_players'])
+			{
+				$stream['stream_address'] = '<iframe width="640" height="390" src="https://www.youtube.com/embed?listType=user_uploads&list=' . $stream['channel_name'] . '"></iframe>';
+			}
+			else
+			{
+				$stream['stream_address'] = '<a href="http://www.youtube.com/' . $stream['channel_name'] . '">Youtube - ' . $stream['channel_name'] . '</a>';
+			}
+		}
+		
+		return $stream;
+	}
+	
+	private function get_twitch_stream($stream)
+	{
+		$result = $this->curl_get('https://api.twitch.tv/kraken/streams/' . $stream['channel_name']);
+
+		if($result !== FALSE && $result !== '' && $this->is_json($result) !== false)
+		{
+			$json_array = json_decode($result, true);
+
+			if(!empty($json_array['stream']))
+			{
+				$stream['stream_address'] = '<iframe id="player" type="text/html" width="640" height="390" src="' . $json_array['stream']['channel']['url'] . '/embed" frameborder="0"></iframe>';
+				$stream['live'] = true;
+			}
+		}
+		
+		if($stream['live'] === false)
+		{
+			if($this->config['cecilius_streamlist_show_offline_players'])
+			{
+				$stream['stream_address'] = '<iframe width="640" height="390" frameborder="0" scrolling="no" allowfullscreen="true" src="https://player.twitch.tv/?channel=' . $stream['channel_name'] . '/embed" frameborder="0"></iframe>';
+			}
+			else
+			{
+				$stream['stream_address'] = '<a href="http://www.twitch.tv/' . $stream['channel_name'] . '">Twitch - ' . $stream['channel_name'] . '</a>';
+			}
+		}
+		
+		return $stream;
+	}
+
 }
